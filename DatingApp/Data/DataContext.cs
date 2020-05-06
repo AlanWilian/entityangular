@@ -1,9 +1,5 @@
 ﻿using DatingApp.Api.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DatingApp.Api.Data
 {
@@ -12,5 +8,7 @@ namespace DatingApp.Api.Data
         public DataContext(DbContextOptions<DataContext> options) : base(options){}
 
         public DbSet<Value> Values { get; set; }
+
+        public DbSet<User> Users {get; set;}
     }
 }
