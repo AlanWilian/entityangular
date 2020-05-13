@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace DatingApp
+namespace DatingApp.Api
 {
     public class Startup
     {

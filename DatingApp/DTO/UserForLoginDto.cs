@@ -1,4 +1,4 @@
-﻿namespace DatingApp.Api.DTO
+namespace DatingApp.Api.DTO
 {
     public class UserForLoginDto
     {
