@@ -10,7 +10,6 @@ namespace DatingApp.Api.Data
     public class AuthRepository : IAuthRepository
     {
         private readonly DataContext _context;
-
         public AuthRepository(DataContext context)
         {
             _context = context;
@@ -18,7 +17,7 @@ namespace DatingApp.Api.Data
 
         public async Task<User> Login(string username, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
+            var user = await _context.Users.Include(p => p.Photos).FirstOrDefaultAsync(x => x.Username == username);
 
             if (user == null)
                 return null;
@@ -29,17 +28,16 @@ namespace DatingApp.Api.Data
             return user;
         }
 
-        private bool VerifyPasswordHash(string password, byte[] passwordhash, byte[] passwordSalt)
+        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
             {
-                var computerHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                for(int i = 0; i < computerHash.Length; i++)
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                for (int i = 0; i < computedHash.Length; i++)
                 {
-                    if (computerHash[i] != passwordhash[i]) return false;
+                    if (computedHash[i] != passwordHash[i]) return false;
                 }
             }
-
             return true;
         }
 
@@ -55,7 +53,6 @@ namespace DatingApp.Api.Data
             await _context.SaveChangesAsync();
 
             return user;
-            
         }
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
@@ -65,16 +62,14 @@ namespace DatingApp.Api.Data
                 passwordSalt = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
-            
         }
 
-        public async Task<bool> UserEsists(string username)
+        public async Task<bool> UserExists(string username)
         {
             if (await _context.Users.AnyAsync(x => x.Username == username))
                 return true;
 
             return false;
- 
         }
     }
 }
